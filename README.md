@@ -165,10 +165,10 @@ python scripts/run_scenarios.py               # full end-to-end run with the rea
 
 - `tests/test_parsing.py`: rule-number parsing, both errata page layouts, card symbol normalization, errata precedence, legend naming.
 - `tests/test_index.py`: checks against the committed index (version recorded, rule numbers exist and link to PDF pages, Elnuk Herd errata wins, card detection), plus retrieval checks for every scenario.
-- `tests/test_explainer.py`: the pipeline with a stub LLM. Covers the pattern blocks in the prompt, the rules version and passages in the prompt, invented rule numbers being flagged and not linked, downgrading uncited answers, the clarification round trip, unknown cards, and diagram validation.
+- `tests/test_explainer.py`: the pipeline with a stub LLM. Covers the pattern blocks in the prompt, the rules version and passages in the prompt, invented rule numbers being flagged and not linked, a CR/TR prefix mix-up being corrected, downgrading uncited answers, the clarification round trip, unknown cards, and diagram validation.
 - `tests/test_app.py`: drives the Streamlit UI headlessly (Streamlit `AppTest`) with a stub LLM: the answer view, citations, and clarification buttons.
 
-**Scenarios** (`scenarios/scenarios.json`). Each one lists the expected status and the rules/sources retrieval must find:
+**Scenarios** (`scenarios/scenarios.json`). Each one lists the expected status, the rules/sources retrieval must find, and optionally the rules an answer must cite:
 
 | id | What it tests | Expected |
 |---|---|---|
@@ -178,7 +178,8 @@ python scripts/run_scenarios.py               # full end-to-end run with the rea
 | errata-elnuk-herd | Must use the 2026-10-09 errata wording, not the printed text | answered |
 | scoring-twice | Once per battlefield per turn (CR 472) | answered |
 | gameplay-vs-tournament-banned-card | Called Shot: legal in gameplay, banned in sanctioned Constructed | answered |
-| **unsupported-2028-rotation** | Riot only says rotation is *intended* for 2028; no set list exists | **not_supported** |
+| rotation-2028 | Riot only says rotation is *intended* for 2028, but TR 601.3.b (current year's sets plus the previous year's) implies every current set rotates out | answered citing TR 601.3, or not_supported |
+| **unsupported-next-set** | No official source names a set after Radiance | **not_supported** |
 | **unknown-card** | "Shadow Mirage King" is not an official card | **needs_clarification** (asks for card text) |
 | hidden-timing | Hidden keyword (CR 811) | answered |
 | direct-rule-lookup | "What does rule 467.2.c.4 mean?" | answered |
@@ -193,7 +194,7 @@ python scripts/run_scenarios.py               # full end-to-end run with the rea
 2. **(0:15) Click "Combat damage split" → Explain.** Show the refined question ("How I understood your question"), the short ruling, and the **CR 467.2.c.3** link. Click it: it opens the official PDF at page 102. Show *Step by step* and *Diagram* (board + sequence, labeled as an illustration).
 3. **(0:50) Click "Respond to a spell (ambiguous)" → Explain.** The app asks one focused question (for example, whether your spell has Reaction) with answer buttons. Click one and the answer appears with citations. *That's the Question Refinement pattern.*
 4. **(1:20) Click "Errata: Elnuk Herd".** Open *Cards recognized*: the current text comes from the Radiance errata, and the printed text is shown underneath.
-5. **(1:35) Click "Not in sources: 2028 rotation".** The app says the official sources don't settle it, rather than inventing a list.
+5. **(1:35) Click "Not in sources: next set".** The app says the official sources don't settle it, rather than inventing a set name or date.
 6. **(1:50) Toggle "Show the prompts sent to the model"** to show the Persona / Question Refinement / Visualization Generator blocks.
 
 Before recording, run `python scripts/run_scenarios.py` once with your key to confirm every scenario behaves as expected.
@@ -233,6 +234,7 @@ tests/                     pytest suite
 - **Parsing depends on Riot's page layouts.** If the Rules Hub, articles, or Card Gallery change format, `refresh` may fail loudly. The committed `data/` keeps the app working until the parser is updated.
 - **Free API tiers** have rate limits. Each question is one call of roughly 5.5k prompt tokens plus up to 2k for the answer.
   - On Groq's free tier, `openai/gpt-oss-120b` allows 8,000 tokens per minute. One question answers in about 2-3 s, but a second question within the same minute waits for the window, about 15-30 s. Pace a live demo about a minute apart, or use a Gemini key, whose limits are much higher.
+  - Groq also caps each account at 200,000 tokens per day, about 25 questions. A full scenario run uses about 80,000 of them. The cap covers every key on the account, so a new key does not reset it.
   - On a rate-limit error the app waits as long as the provider asks (up to 30 s) and retries, then switches to the other provider if both keys are set.
   - If a request is too large for one Groq model, it tries `llama-3.3-70b-versatile`.
   - `GROQ_REASONING_EFFORT=low` is the default. It gave the same rulings as medium in testing at roughly a tenth of the latency.

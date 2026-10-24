@@ -76,13 +76,18 @@ def main() -> int:
                 r = exp.result
                 if r["status"] not in sc["expect_status"]:
                     problems.append(f"status {r['status']} not in {sc['expect_status']}")
+                refs = [c.ref for c in exp.citations]
+                if r["status"] == "answered":
+                    for want in sc.get("expect_answer_citations", []):
+                        if not any(ref.startswith(want) for ref in refs):
+                            problems.append(f"answer does not cite {want}")
                 if any("not in the indexed official sources" in w for w in exp.warnings):
                     problems.append("model produced an unverifiable citation (flagged and removed)")
                 line += (
                     f"\n- status: **{r['status']}** (confidence {r['confidence']}, {exp.llm.provider} {exp.llm.model}, {exp.llm.seconds}s)"
                     f"\n- refined question: {r['refined_question']}"
                     f"\n- short answer: {r['short_answer'] or r['clarifying_question']}"
-                    f"\n- citations: {', '.join(c.ref for c in exp.citations) or 'none'}"
+                    f"\n- citations: {', '.join(refs) or 'none'}"
                     f"\n- warnings: {'; '.join(exp.warnings) or 'none'}\n"
                 )
         verdict = "PASS" if not problems else "FAIL: " + "; ".join(problems)

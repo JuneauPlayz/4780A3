@@ -73,6 +73,10 @@ whether a unit is facedown.
   has unknown text and keywords (Reaction, Action, Hidden, ...), and those often decide timing.
 - If the missing detail would not change the ruling, answer anyway and record what you
   assumed in "assumptions".
+- If the player has already answered a clarifying question, answer now. Do not ask about
+  anything the rules let you work out from what they said (for example, a spell still on
+  the chain means the chain is in a Closed State). Ask again only if a different decisive
+  detail is still missing.
 """
 
 VISUALIZATION_GENERATOR_PATTERN = """\

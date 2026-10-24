@@ -110,6 +110,10 @@ class CitationChecker:
         if m:
             kind = "tournament_rules" if (m.group(1) or "").upper().startswith("T") else "core_rules"
             num = norm_rule(m.group(2))
+            # A number given to the model from the other rulebook under the wrong prefix (CR 601.3.b for TR 601.3.b).
+            other = "core_rules" if kind == "tournament_rules" else "tournament_rules"
+            if not self.kb.rule_exists(kind, num) and num in self.context_rules[other]:
+                kind = other
             key = f"{'TR' if kind == 'tournament_rules' else 'CR'} {num}"
             if key in self.seen:
                 return self.seen[key]

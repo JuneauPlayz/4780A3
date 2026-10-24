@@ -21,3 +21,6 @@ venv/
 
 # local tooling
 .claude/
+
+# rendered demo video (upload to YouTube; too large for the repo)
+video/

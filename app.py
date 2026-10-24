@@ -24,7 +24,8 @@ EXAMPLES = [
     ("Scoring twice",
      "Can I score the same battlefield twice in one turn if I conquer it, leave, and conquer it again?"),
     ("Banned card?", "Is Called Shot allowed in my deck?"),
-    ("Not in sources: 2028 rotation", "When Standard rotation starts in 2028, which sets will rotate out?"),
+    ("2028 rotation", "When Standard rotation starts in 2028, which sets will rotate out?"),
+    ("Not in sources: next set", "What is the next set after Radiance called, and when does it release?"),
 ]
 
 STATUS_BADGE = {

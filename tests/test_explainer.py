@@ -67,6 +67,14 @@ def test_citation_with_trailing_commentary_still_resolves(kb):
     assert not exp.warnings
 
 
+def test_wrong_rulebook_prefix_resolves_to_the_passage_given(kb):
+    q = "When Standard rotation starts in 2028, which sets will rotate out?"
+    exp = explain(kb, q, llm=stub({"status": "answered", "short_answer": "See [CR 601.3.b].", "citations": [{"ref": "CR 601.3.b", "supports": "x"}]}))
+    assert [c.ref for c in exp.citations] == ["TR 601.3.b"]
+    assert "[TR 601.3.b]" in exp.result["short_answer"]
+    assert not exp.warnings
+
+
 def test_answer_without_valid_citation_is_downgraded(kb):
     exp = explain(kb, QUESTION, llm=stub({"status": "answered", "short_answer": "Yes [CR 999.1].", "confidence": "high"}))
     assert exp.result["confidence"] == "low"
