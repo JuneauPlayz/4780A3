@@ -1,0 +1,76 @@
+[
+  {
+    "id": "combat-damage-assignment",
+    "question": "I attack a battlefield with one 5 Might unit. My opponent has two 3 Might units defending there. Can I assign 3 damage to one and 2 to the other, or must it be split differently?",
+    "expect_status": ["answered"],
+    "expect_retrieved_rules": ["467.2.c.3"],
+    "notes": "Well-supported ruling: lethal damage must be assigned in full before moving on (CR 467.2.c.3)."
+  },
+  {
+    "id": "ambiguous-respond-to-spell",
+    "question": "My opponent played a spell targeting my unit. Can I respond with one of my spells to save it?",
+    "expect_status": ["needs_clarification"],
+    "expect_retrieved_rules": ["813"],
+    "notes": "Ambiguous: whether you can respond depends on your spell's timing keyword (Reaction vs Action) and what both spells do. The app should ask, not guess."
+  },
+  {
+    "id": "ambiguous-respond-to-spell-clarified",
+    "question": "My opponent played a spell targeting my unit. Can I respond with one of my spells to save it?",
+    "clarification": "My spell has [Reaction]. It is my opponent's turn and their spell is still on the chain.",
+    "expect_status": ["answered"],
+    "expect_retrieved_rules": ["813"],
+    "notes": "Same question after the clarification is supplied; the decisive detail (Reaction) is now known."
+  },
+  {
+    "id": "errata-elnuk-herd",
+    "question": "I played Elnuk Herd from face down. Can its play ability give +3 Might to Elnuk Herd itself?",
+    "expect_status": ["answered", "needs_clarification"],
+    "expect_cards": ["Elnuk Herd"],
+    "expect_errata": true,
+    "expect_retrieved_rules": ["811"],
+    "notes": "Printed text said 'another friendly unit'; the Radiance errata (2026-10-09) changed it to 'a friendly unit'. The answer must use the errata wording."
+  },
+  {
+    "id": "scoring-twice",
+    "question": "Can I score the same battlefield twice in one turn if I conquer it, leave, and conquer it again?",
+    "expect_status": ["answered"],
+    "expect_retrieved_rules": ["472"],
+    "notes": "CR 472: a player may only score once per battlefield per turn."
+  },
+  {
+    "id": "gameplay-vs-tournament-banned-card",
+    "question": "Is Called Shot allowed in my deck?",
+    "expect_status": ["answered", "needs_clarification"],
+    "expect_cards": ["Called Shot"],
+    "expect_retrieved_sources": ["HUB-legality"],
+    "notes": "Gameplay rules do not forbid it, but it is banned in sanctioned Constructed (Rules Hub legality list). The answer should separate the two."
+  },
+  {
+    "id": "unsupported-2028-rotation",
+    "question": "When Standard rotation starts in 2028, which sets will rotate out?",
+    "expect_status": ["not_supported", "needs_clarification"],
+    "expect_retrieved_sources": ["HUB-legality"],
+    "notes": "Sources only say Riot intends to introduce rotation starting in 2028; they do not say which sets. The app must not invent a list."
+  },
+  {
+    "id": "unknown-card",
+    "question": "If my Shadow Mirage King copies my opponent's legend, do I get its abilities?",
+    "expect_status": ["needs_clarification", "not_supported"],
+    "expect_unrecognized": ["Shadow Mirage King"],
+    "notes": "No such card in the official Card Gallery; the app should ask for the card text instead of guessing."
+  },
+  {
+    "id": "hidden-timing",
+    "question": "Can I hide a card with Hidden face down at a battlefield and then play it on my opponent's turn? What can it choose?",
+    "expect_status": ["answered"],
+    "expect_retrieved_rules": ["811.1"],
+    "notes": "Keyword rule lookup (CR 811 Hidden)."
+  },
+  {
+    "id": "direct-rule-lookup",
+    "question": "What does rule 467.2.c.4 mean in plain English?",
+    "expect_status": ["answered"],
+    "expect_retrieved_rules": ["467.2.c.4"],
+    "notes": "Exact rule-number lookup is always retrieved."
+  }
+]
